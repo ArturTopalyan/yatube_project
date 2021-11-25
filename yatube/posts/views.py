@@ -1,37 +1,23 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
+from .models import Post, Group
 
-# Главная страница
 def index(request):
-    # Адрес шаблона сохраним в переменную, это не обязательно, но удобно
-    template = 'posts/index.html'
-    # Строку, которую надо вывести на страницу, тоже сохраним в переменную
-    title = 'Yatube_project'
-    # Словарь с данными принято называть context
+    posts = Post.objects.order_by('-pub_date')[:10]
     context = {
-        # В словарь можно передать переменную
-        'title': title,
-        # А можно сразу записать значение в словарь. Но обычно так не делают
-        'text': "Это главная страница проекта Yatube",
-    }
-    # Третьим параметром передаём словарь context
-    return render(request, template, context)
+        'posts': posts,
+    } 
+    return render(request, 'posts/index.html', context)
 
 
-# Страница со списком групп сообщества
-def group_posts(request):
-    template = 'posts/group_list.html'
 
-    title = 'Группы проекта Yatube'
-    # Словарь с данными принято называть context
+def group_posts(request, slug):
+    group = get_object_or_404(Group, slug=slug)
+    posts = group.posts.all()[:10]
     context = {
-        # В словарь можно передать переменную
-        'title': title,
-        # А можно сразу записать значение в словарь. Но обычно так не делают
-        'text': "Здесь будет информация о группах проекта Yatube",
+        'group': group,
+        'posts': posts,
     }
-    # Третьим параметром передаём словарь context
-    return render(request, template, context)
+    return render(request, 'posts/group_list.html', context)
 
-# Create your views here.
+
