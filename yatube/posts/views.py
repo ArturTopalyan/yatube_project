@@ -4,10 +4,8 @@ from .models import Post, Group
 
 
 def index(request):
-    posts = Post.objects.order_by('-pub_date')[:10]
-    text = "Это главная страница проекта Yatube"
+    posts = Post.objects.select_related('group')[:10]
     context = {
-        'text': text,
         'posts': posts,
     }
     return render(request, 'posts/index.html', context)
