@@ -6,25 +6,13 @@
   <div class="container py-5">     
   <h1>Последние обновления на сайте</h1>
       {% for post in posts %}
-       <article>
-        <ul>
-          <li>
-            Автор: {{ post.author.get_full_name }}
-          </li>
-          <li>
-            Дата публикации: {{post.pub_date|date:"j E Y"}}
-          </li>
-        </ul>      
-        <p>
-          {{ post.text|linebreaks }}
-        </p>
-        {% if post.group is not None %}
+      <article>
+        {% include 'includes/article.html' %}
+        {% if post.group.slug %}
           <a href="{% url 'posts:group_posts' post.group.slug %}">Все записи группы</a>
         {% endif %}  
         {% if not forloop.last %}<hr>{% endif %}
-       </article>
+      </article>
       {% endfor %}
   </div>
 {% endblock %}
-
-
