@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-{% block title %} 
-  Пост {{ author|truncatechars:30 }} 
+{% block title %}
+{{pos_detail.text|truncatechars:30 }}
 {% endblock %}
 {% block content%}
   <div class="row">
@@ -8,12 +8,12 @@
       <ul class="list-group list-group-flush">
         <li class="list-group-item">
           Дата публикации: {{post.pub_date|date:"j E Y"}}  
-        </li>   
+        </li>  
         <li class="list-group-item">
           Группа: {{ post.group.title }}
-        {% if post.group %}   
+        {% if post.group %}  
           <a href="{% url 'posts:group_posts' post.group.slug %}">все записи группы</a>
-        {% endif %} 
+        {% endif %}
         </li>
         <li class="list-group-item">
           Автор: {{ post.author.get_full_name }}
@@ -22,11 +22,9 @@
           Всего постов автора:  <span > {{ post_count }}</span>
         </li>
         <li class="list-group-item">
-        {% if post.author.username is not None%}
           <a href="{% url 'posts:profile' post.author.username  %}">
-              все посты пользователя
+              Все посты пользователя
           </a>
-        {% endif %}
         </li>
       </ul>
     </aside>
@@ -34,6 +32,11 @@
     <p>
       {{ post.text|linebreaks }}
     </p>
+    {% if post.author == request.user %}
+    <a class="btn btn-primary" href="{% url 'posts:post_edit' post.id %}">
+      Редактировать запись
+    </a>
+    {% endif %}
     </article>
-  </div> 
+  </div>
 {% endblock %}
