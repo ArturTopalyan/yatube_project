@@ -35,7 +35,7 @@ def group_posts(request, slug):
     return render(request, 'posts/group_list.html', context)
 
 
-@login_required
+
 def profile(request, username):
     post_user_list = Post.objects.select_related('author', 'group').all()
     number_of_posts = post_user_list.count()
