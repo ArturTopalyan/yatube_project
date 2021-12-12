@@ -1,5 +1,4 @@
-from typing import Text
-from django.contrib.auth import login
+
 from django.core.paginator import Paginator
 
 
@@ -33,7 +32,6 @@ def group_posts(request, slug):
         'group': group,
     }
     return render(request, 'posts/group_list.html', context)
-
 
 
 def profile(request, username):
