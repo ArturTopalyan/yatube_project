@@ -74,8 +74,9 @@ def post_create(request):
             new_post.save()
             return redirect('posts:profile', author.username)
         return render(request, 'posts/create_post.html',
-                      {'is_edit': True, 'form': form})
-    form = PostForm()
+                      {'form': form, 'is_edit': True})
+    else:
+        form = PostForm()
     return render(request, 'posts/create_post.html',
                   {'form': form})
 
