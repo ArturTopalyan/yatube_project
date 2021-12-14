@@ -1,16 +1,20 @@
-
+from django.core.paginator import Paginator
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
+from yatube.settings import PAGINATOR_NUM
+
 from .forms import PostForm
 from .models import Post, Group
-from django.core.paginator import Paginator
+
+from django.conf import settings
+settings.PAGINATOR_NUM
 
 
 def index(request):
     posts = Post.objects.select_related('author', 'group').all()
-    paginator = Paginator(posts, 10)
+    paginator = Paginator(posts, PAGINATOR_NUM)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
@@ -21,8 +25,8 @@ def index(request):
 
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
-    posts = Post.objects.all().order_by('-pub_date')
-    paginator = Paginator(posts, 10)
+    posts = Post.objects.select_related('author', 'group').all()
+    paginator = Paginator(posts, PAGINATOR_NUM)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
@@ -37,7 +41,7 @@ def profile(request, username):
     number_of_posts = post_user.count()
     author = get_object_or_404(User, username=username)
     posts = author.posts.all()
-    paginator = Paginator(posts, 10)
+    paginator = Paginator(posts, PAGINATOR_NUM)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
@@ -73,7 +77,7 @@ def post_create(request):
                       {'is_edit': True, 'form': form})
     form = PostForm()
     return render(request, 'posts/create_post.html',
-                  {'is_edit': True, 'form': form})
+                  {'form': form})
 
 
 @login_required
@@ -83,7 +87,6 @@ def post_edit(request, post_id):
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
             post = form.save(commit=False)
-            post.author = request.user
             post.save()
             return redirect('posts:post_detail', post_id)
         context = {'form': form, 'is_edit': True}
